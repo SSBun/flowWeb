@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Diary</title>
+		<script type="text/javascript" src="/static/lib/wangEditor.min.js"></script>
+		<script type="text/javascript" src="/static/lib/jquery.js"></script>
+		<style>
+
+			body {
+				background-color: #fff;
+			}
+
+
+			/*Login pannel style */
+
+			.loginPanel {
+				width: 300px;
+				height: 180px;
+				/*background-color: #f1f1f1;*/
+				border-radius: 8px;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%,-50%);
+			}
+
+			.textfield {
+				width: 280px;
+				height: 45px;
+				border-radius: 8px;
+				margin: 10px auto;
+			}
+
+			.input {
+				width: 260px;
+				height: 100%;
+				border-style: none;
+				outline: none;
+				border-radius: 8px;
+				padding: 0px 10px;
+				font-size: 20px;
+			}
+			::-webkit-input-placeholder { color:#d9d9d9; font-size: 18px;}
+			::-moz-placeholder { color:#f00; } /* firefox 19+ */
+			:-ms-input-placeholder { color:#f00; } /* ie */
+
+
+			.loginBtn {
+				display: block;
+				width: 200px;
+				height: 40px;
+				margin: 0px auto;
+				margin-top: 15px;
+				border: none;
+				color: #fff;
+				font-size: 20px;
+				font-weight: bold;
+			}
+
+			.icon {
+				width: 200px;
+				height: 200px;
+				background-color: red;
+				position: absolute;
+				top:-200px;
+				left: 50px;
+			}
+
+			.enable {
+				background-color: #0090cd;
+			}
+
+			.disable {
+				background-color: #dddddd;
+			}
+			.container {
+				width: 80%;
+				margin: auto;
+			}
+
+			.button {
+				background-color: #eeeeee;
+				color: #333333;
+				font-size: 30px;
+				width: 200px;
+				height: 40px;
+				border: none;
+			}	
+
+
+
+			/*Editor style*/
+
+			#editor {
+				width: 100%;
+				height: 300px;
+				margin: 0px auto;
+				margin-top: 20px;
+				background-color: white;
+				border: 1px ridge #57C6F8;
+			}
+
+			.toolbar {
+				margin-top: 20px;
+				width: 100%; 
+				min-width: 700px; 
+				height: 30px; 
+				background-color: white;
+			}
+
+
+			
+			/*User tool bar*/
+
+			.user_bar {
+				width: 100%;
+				position: relative;
+				height: 50px;
+				background-color: #eaeaea;
+			}
+
+			.user_icon {
+				display: inline-block;
+				float: left;
+				width: 30px;
+				height: 30px;
+				background-color: white;
+				margin-top: 10px;
+				margin-left: 10px;
+				border-radius: 15px;
+			}
+
+			.user_name {
+				color: #999;
+				display: inline-block;
+				float: left;
+				text-align: center;
+				height: 30px;
+				line-height: 30px;
+				margin-top: 10px;
+				margin-left: 20px;
+			}
+
+			/*User account action bar*/
+			.action {
+				width: 240px;
+				height: 30px;
+				margin-top: 10px;
+				float: right;
+				position: relative;
+				right: 10px;
+			}
+
+			.logout {
+				float: left;
+				height: 100%;
+				width: 100px;
+				font-size: 20px;
+				background-color: red;
+				display: inline-block;
+				color: white;
+			}
+				
+			.publish {
+				font-size: 20px;
+				width: 100px;
+				height: 100%;
+				float: right;
+				display: inline-block;
+				color: white;
+				background-color: blue;
+			}
+
+			/*Diary header*/
+
+			.info_header {
+				display: none;
+				background-color: red;
+				width: 100%;
+				height: 100px;
+				margin: 0px auto;
+			}
+
+		</style>
+	</head>
+	<body> 
+		<div class="container">
+			{% if logged_in %}
+			<div class="user_bar">
+				<img src="" alt="" class="user_icon">
+				<label for="" class="user_name">User name</label>
+			    <div class="action">
+				    <button class="publish">发布日志</button>
+				    <button class="logout">退出登录</button>
+			    </div>
+			</div>
+			<div id="toolbar"  class="toolbar"></div>
+			<div class="info_header">
+				<div class="date">
+					选择时间
+				</div>
+				<div class="weather"></div>
+			</div>
+		    <div id="editor""></div>
+		    <script type="text/javascript">
+		    	var editor = new window.wangEditor('#toolbar', '#editor');
+		    	editor.customConfig.menus = ['bold', 'italic', 'underline', 'strikeThrough', 'foreColor', 'list', 'justify', 'undo', 'redo'];
+		    	editor.create();
+		    	$(function() {
+		    		$.ajax({
+		    			url: '/user/info/',
+		    			type: 'GET',
+		    			dataType: 'json',
+		    			data: {},
+		    		})
+		    		.done(function(data) {
+		    			$('.user_name').text(data['name']);
+		    			$('.user_icon').attr('src', data['avatar'])
+		    		})
+		    		.fail(function() {
+		    			console.log("error");
+		    		})
+		    		.always(function() {
+		    			console.log("complete");
+		    		});
+
+
+		    		$('.logout').click(function() {
+		    			$.ajax({
+		    				url: '/user/logout',
+		    				type: 'GET',
+		    				dataType: 'html',
+		    				data: {},
+		    			})
+		    			.done(function(data) {
+		    				$('body').html(data);
+		    			})
+		    			.fail(function() {
+		    				console.log("error");
+		    			})
+		    			.always(function() {
+		    				console.log("complete");
+		    			});
+		    			
+		    		});
+
+		    		$('.publish').click(function() {
+		    			if ($(this).hasClass('publishing')) {
+		    				alert('is publishing');
+		    				return;
+		    			} else {
+		    				$(this).addClass('publishing');
+		    			}
+		    			var text = editor.txt.text();
+		    			var html = editor.txt.html();
+		    			$(this).text('发布中');
+		    			$.ajax({
+		    					url: '/diary/publish/',
+		    					type: 'POST',
+		    					dataType: 'json',
+		    					data: {'content': text, 'html_content': html},
+		    				})
+		    				.done(function(data) {
+		    					alert('publish success')
+		    					console.log(data);
+		    				})
+		    				.fail(function() {
+		    					alert('publish failure')
+		    					console.log("error");
+		    				})
+		    				.always(function() {
+		    					$('.publish').text('发布日志');
+		    					$('.publish').removeClass('publishing');
+		    					console.log("complete");
+		    				});
+		    					
+		    		});
+		    	})
+		    </script>
+
+			{% else %}
+			    <form action="/user/login" method="POST">
+					<div class="loginPanel">
+						<div class="icon">
+							<img src="./../static/image/icon.png" style="width: 100%; height: 100%">
+						</div>
+				    	<div class="textfield account">
+					        <input class="input input_account" type="text" name="phone" placeholder="Phone number">
+				    	</div>
+				    	<div class="textfield password">
+					        <input class="input input_password" type="password" name="password" placeholder="Password">
+				    	</div>
+				        <input class="loginBtn disable" type="submit" value="login">
+					</div>
+			    </form>
+
+			    <script type="text/javascript">
+			    	$(function() {
+			    		var formData = {account: null, password: null}
+
+			    		$('.input_account').bind('input propertychange', function() {
+			    			formData.account = this.value;
+			    			checkParam();
+			    		});
+			    		$('.input_password').bind('input propertychange', function() {
+			    			formData.password = this.value;
+			    			checkParam();
+			    		});
+
+			    		var checkParam = function() {
+			    			if (formData.account && formData.account.length == 11 && formData.password) {
+			    				$('.loginBtn').removeClass('disable');
+			    				$('.loginBtn').addClass('enable');
+			    			} else {
+			    				$('.loginBtn').removeClass('enable');
+			    				$('.loginBtn').addClass('disable');
+			    			}
+			    		}
+			    	})
+			    </script>
+			{% endif %}
+		</div>
+	</body>
+</html>

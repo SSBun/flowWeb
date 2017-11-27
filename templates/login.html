@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<script type="text/javascript" src="./../static/lib/jquery.js"></script>
+		<title>User Login</title>
+		<style>
+
+			body {
+				background-color: #57C6F8;
+			}
+
+			.loginPanel {
+				width: 300px;
+				height: 180px;
+				/*background-color: #f1f1f1;*/
+				border-radius: 8px;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%,-50%);
+			}
+
+			.textfield {
+				width: 280px;
+				height: 45px;
+				border-radius: 8px;
+				margin: 10px auto;
+			}
+
+			.input {
+				width: 260px;
+				height: 100%;
+				border-style: none;
+				outline: none;
+				border-radius: 8px;
+				padding: 0px 10px;
+				font-size: 20px;
+			}
+			::-webkit-input-placeholder { color:#d9d9d9; font-size: 18px;}
+			::-moz-placeholder { color:#f00; } /* firefox 19+ */
+			:-ms-input-placeholder { color:#f00; } /* ie */
+
+
+			.loginBtn {
+				display: block;
+				width: 200px;
+				height: 40px;
+				margin: 0px auto;
+				margin-top: 15px;
+				border: none;
+				color: #fff;
+				font-size: 20px;
+				font-weight: bold;
+			}
+
+			.icon {
+				width: 200px;
+				height: 200px;
+				background-color: red;
+				position: absolute;
+				top:-200px;
+				left: 50px;
+			}
+
+			.enable {
+				background-color: #0090cd;
+			}
+
+			.disable {
+				background-color: #dddddd;
+			}
+
+
+
+		</style>
+	</head>
+
+	<body> 
+	    <form action="/user/login" method="POST">
+			<div class="loginPanel">
+				<div class="icon">
+					<img src="./../static/image/icon.png" style="width: 100%; height: 100%">
+				</div>
+		    	<div class="textfield account">
+			        <input class="input input_account" type="text" name="phone" placeholder="Phone number">
+		    	</div>
+		    	<div class="textfield password">
+			        <input class="input input_password" type="password" name="password" placeholder="Password">
+		    	</div>
+		        <input class="loginBtn disable" type="submit" value="login">
+			</div>
+	    </form>
+
+	    <script type="text/javascript">
+	    	$(function() {
+	    		var formData = {account: null, password: null}
+
+	    		$('.input_account').bind('input propertychange', function() {
+	    			formData.account = this.value;
+	    			checkParam();
+	    		});
+	    		$('.input_password').bind('input propertychange', function() {
+	    			formData.password = this.value;
+	    			checkParam();
+	    		});
+
+	    		var checkParam = function() {
+	    			if (formData.account && formData.account.length == 11 && formData.password) {
+	    				$('.loginBtn').removeClass('disable');
+	    				$('.loginBtn').addClass('enable');
+	    			} else {
+	    				$('.loginBtn').removeClass('enable');
+	    				$('.loginBtn').addClass('disable');
+	    			}
+	    		}
+	    	})
+	    </script>
+	</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
